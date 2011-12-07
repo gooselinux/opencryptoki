@@ -1,0 +1,45 @@
+diff -up opencryptoki-2.3.1/misc/pkcsslotd.in.pidfile opencryptoki-2.3.1/misc/pkcsslotd.in
+--- opencryptoki-2.3.1/misc/pkcsslotd.in.pidfile	2010-04-26 16:33:00.000000000 +0200
++++ opencryptoki-2.3.1/misc/pkcsslotd.in	2010-04-26 16:33:31.000000000 +0200
+@@ -27,19 +27,7 @@ start() {
+         # Generate the configuration information
+         $CONFSTART
+ 
+-	## Start daemon with startproc(8). If this fails
+-	## the echo return value is set appropriate.
+-        if [ ! -f $PIDFILE ]; then
+-           # pid file does not exist
+-           daemon --force $SLOTDBIN
+-        elif ! ps -h --pid `cat $PIDFILE` | grep "$SLOTDBIN" 2>&1 >/dev/null; then
+-           # pid file exists but named pid not
+-           rm -f $PIDFILE
+-           daemon --force $SLOTDBIN
+-        else
+-           # just to have "failed" message
+-           daemon $SLOTDBIN
+-        fi
++        daemon $SLOTDBIN
+ 
+ 	RETVAL=$?
+ 	echo
+@@ -49,7 +37,7 @@ start() {
+ 
+ stop() {
+ 	echo -n $"Shutting down pkcsslotd:"
+-	killproc pkcsslotd -TERM
++	killproc pkcsslotd
+ 	RETVAL=$?
+ 	echo
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCKFILE
+diff -up opencryptoki-2.3.1/usr/include/pkcs11/slotmgr.h.pidfile opencryptoki-2.3.1/usr/include/pkcs11/slotmgr.h
+--- opencryptoki-2.3.1/usr/include/pkcs11/slotmgr.h.pidfile	2010-04-26 16:32:42.000000000 +0200
++++ opencryptoki-2.3.1/usr/include/pkcs11/slotmgr.h	2010-04-26 16:32:46.000000000 +0200
+@@ -325,7 +325,7 @@
+ #endif
+ 
+ 
+-#define PID_FILE_PATH CONFIG_PATH "/.slotpid"
++#define PID_FILE_PATH "/var/run/pkcsslotd.pid"
+ 
+ #ifndef CK_BOOL
+     #define CK_BOOL  CK_BBOOL

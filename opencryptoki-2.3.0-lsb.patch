@@ -1,0 +1,57 @@
+Index: opencryptoki-2.3.1/misc/pkcsslotd.in
+===================================================================
+--- opencryptoki-2.3.1.orig/misc/pkcsslotd.in
++++ opencryptoki-2.3.1/misc/pkcsslotd.in
+@@ -17,10 +17,11 @@ LOCKFILE=/var/lock/subsys/pkcsslotd
+ SLOTDBIN=@METHOD_PATH@/pkcsslotd
+ CONFSTART=@METHOD_PATH@/pkcs11_startup
+ 
+-[ -f $SLOTDBIN ] || exit 5
+-[ -f $CONFSTART ] || exit 5
+ 
+ start() {
++	[ -x $SLOTDBIN ] || exit 5
++	[ -x $CONFSTART ] || exit 5
++
+  	echo -n $"Starting pkcsslotd: "
+ 
+         # Generate the configuration information
+@@ -40,8 +41,8 @@ start() {
+            daemon $SLOTDBIN
+         fi
+ 
+-	echo
+ 	RETVAL=$?
++	echo
+ 	[ $RETVAL -eq 0 ] && touch $LOCKFILE
+ 	return $RETVAL
+ }	
+@@ -49,8 +50,8 @@ start() {
+ stop() {
+ 	echo -n $"Shutting down pkcsslotd:"
+ 	killproc pkcsslotd -TERM
+-	echo
+ 	RETVAL=$?
++	echo
+ 	[ $RETVAL -eq 0 ] && rm -f $LOCKFILE
+ 	return $RETVAL
+ }
+@@ -73,15 +74,15 @@ case "$1" in
+   status)
+   	status pkcsslotd $SLOTDBIN
+ 	;;
+-  restart|reload)
++  restart|reload|force-reload)
+   	restart
+ 	;;
+   condrestart)
+   	[ -f $LOCKFILE ] && restart || :
+ 	;;
+   *)
+-	echo $"Usage: $0 {start|stop|status|restart|condrestart}"
+-	exit 1
++	echo $"Usage: $0 {start|stop|status|restart|condrestart|reload|force-reload}"
++	exit 2
+ esac
+ 
+ exit $?
